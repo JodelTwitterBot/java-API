@@ -26,7 +26,7 @@ public class crawler {
 	public static void main (String[] args) throws Exception {
 		while (true) {
 			jodelFetcher();
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class crawler {
 		    
 		    reader.close();
 		    
-		    System.out.println(result);
+		    //System.out.println(result);
 		    JSONObject jObject = new JSONObject(result);
 		    
 		    JSONArray jArray = jObject.getJSONArray("posts");
@@ -71,8 +71,9 @@ public class crawler {
 		        
 		        if (message.length() < 140 && message.contains("photo") == false && message.contains("image") == false) {
 		        	Date d = sdf.parse(oneObject.getString("created_at"));
-		        	if (now.getTime() - d.getTime() < 30 * 60 * 1000) {
+		        	if (now.getTime() - d.getTime() < 60 * 1000) {
 		        		System.out.println(message);
+		        		System.out.println(d);
 		        		twitter(message); 
 		        	}
 		        }
@@ -96,7 +97,7 @@ public class crawler {
         	ConfigurationBuilder cb = new ConfigurationBuilder();
         	cb.setDebugEnabled(true)
         	  /*
-        	   * NOPE ;)
+        	   * NOPE :P
         	   */
         	TwitterFactory tf = new TwitterFactory(cb.build());
         	Twitter twitter = tf.getInstance();
@@ -111,9 +112,9 @@ public class crawler {
 
                 BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 while (null == accessToken) {
-                    System.out.println("Open the following URL and grant access to your account:");
-                    System.out.println(requestToken.getAuthorizationURL());
-                    System.out.print("Enter the PIN(if available) and hit enter after you granted access.[PIN]:");
+                    //System.out.println("Open the following URL and grant access to your account:");
+                    //System.out.println(requestToken.getAuthorizationURL());
+                    //System.out.print("Enter the PIN(if available) and hit enter after you granted access.[PIN]:");
                     String pin = br.readLine();
                     try {
                         if (pin.length() > 0) {

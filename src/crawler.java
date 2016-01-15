@@ -13,6 +13,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
+import twitter4j.conf.ConfigurationBuilder;
 
 
 
@@ -64,7 +65,7 @@ public class crawler {
 		        if (message.length() < 140 && message.contains("photo") == false) {
 		        	System.out.println(message);
 		        	twitter(message); 
-		        	Thread.sleep(1000);
+		        	//Thread.sleep(1000);
 		        }
 		    }
 		    
@@ -82,7 +83,14 @@ public class crawler {
     public static void twitter(String message) {
 
         try {
-            Twitter twitter = new TwitterFactory().getInstance();
+        	
+        	ConfigurationBuilder cb = new ConfigurationBuilder();
+        	cb.setDebugEnabled(true)
+        	  /*
+        	   * NOPE :P
+        	   */
+        	TwitterFactory tf = new TwitterFactory(cb.build());
+        	Twitter twitter = tf.getInstance();
             try {
                 // get request token.
                 // this will throw IllegalStateException if access token is already available

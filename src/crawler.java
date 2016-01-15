@@ -3,6 +3,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.SimpleTimeZone;
+import java.util.TimeZone;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +26,7 @@ public class crawler {
 	public static void main (String[] args) throws Exception {
 		while (true) {
 			jodelFetcher();
-			Thread.sleep(30000);
+			Thread.sleep(10000);
 		}
 	}
 	
@@ -31,7 +35,7 @@ public class crawler {
 		try {
 			URL url = new URL("https://api.go-tellm.com/api/v2/posts/");
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestProperty("Authorization", "Bearer " + "507ecd8a-79fa-425a-9249-777e88c740a6");
+			urlConnection.setRequestProperty("Authorization", "Bearer " + "UUID");
 			urlConnection.setRequestMethod("GET");    
 		        
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -52,20 +56,25 @@ public class crawler {
 		    System.out.println(result);
 		    JSONObject jObject = new JSONObject(result);
 		    
-		    //experimentCount = jObject.getInt("tot");
 		    JSONArray jArray = jObject.getJSONArray("posts");
 		    
-		    
-		    
+        	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        	sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        
+        	Date now = new Date();
+        	
 		    for (int i=0; i < jArray.length(); i++)
 		    {  
 		        JSONObject oneObject = jArray.getJSONObject(i);
 		        // Pulling items from the array
 		        String message = oneObject.getString("message");
-		        if (message.length() < 140 && message.contains("photo") == false) {
-		        	System.out.println(message);
-		        	twitter(message); 
-		        	//Thread.sleep(1000);
+		        
+		        if (message.length() < 140 && message.contains("photo") == false && message.contains("image") == false) {
+		        	Date d = sdf.parse(oneObject.getString("created_at"));
+		        	if (now.getTime() - d.getTime() < 30 * 60 * 1000) {
+		        		System.out.println(message);
+		        		twitter(message); 
+		        	}
 		        }
 		    }
 		    
@@ -87,7 +96,7 @@ public class crawler {
         	ConfigurationBuilder cb = new ConfigurationBuilder();
         	cb.setDebugEnabled(true)
         	  /*
-        	   * NOPE :P
+        	   * NOPE ;)
         	   */
         	TwitterFactory tf = new TwitterFactory(cb.build());
         	Twitter twitter = tf.getInstance();

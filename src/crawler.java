@@ -61,7 +61,7 @@ public class crawler {
 		        JSONObject oneObject = jArray.getJSONObject(i);
 		        // Pulling items from the array
 		        String message = oneObject.getString("message");
-		        if (message.length() < 140) {
+		        if (message.length() < 140 && message.contains("photo") == false) {
 		        	System.out.println(message);
 		        	twitter(message); 
 		        	Thread.sleep(1000);

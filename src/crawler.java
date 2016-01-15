@@ -75,14 +75,14 @@ public class crawler {
 				JSONObject oneObject = jArray.getJSONObject(i);
 				// Pulling items from the array
 				String message = oneObject.getString("message");
-
+				// System.out.println(i);
 				if (oneObject.has("thumbnail_url")) {
+					System.out.println("bild!");
 					Date d = sdf.parse(oneObject.getString("created_at"));
-					if (now.getTime() - d.getTime() < 1 * 60 * 1000) {
+					if (now.getTime() - d.getTime() < 30 * 1000) {
 						String imageURL = oneObject.getString("thumbnail_url");
 						imageURL = "http:" + imageURL;
 						System.out.println(imageURL);
-						System.out.println(message);
 
 						URL Imageurl = new URL(imageURL);
 						InputStream in = new BufferedInputStream(
@@ -96,14 +96,17 @@ public class crawler {
 						in.close();
 						out.close();
 
-						message = message.substring(0, 139); 
+						int maxLength = (message.length() < 139) ? message
+								.length() : 139;
+						message = message.substring(0, maxLength);
+
 						picture(message, "./tmp.jpeg");
 					}
 				}
 
 				else if (message.length() < 140) {
 					Date d = sdf.parse(oneObject.getString("created_at"));
-					if (now.getTime() - d.getTime() < 1 * 60 * 1000) {
+					if (now.getTime() - d.getTime() < 5 * 60 * 1000) {
 						System.out.println(message);
 						System.out.println(d);
 						twitter(message);
@@ -133,6 +136,7 @@ public class crawler {
 
 		File file = new File(pfad);
 
+		System.out.println(message);
 		StatusUpdate status = new StatusUpdate(message);
 		status.setMedia(file); // set the image to be uploaded here.
 		twitter.updateStatus(status);
@@ -144,9 +148,9 @@ public class crawler {
 
 			ConfigurationBuilder cb = new ConfigurationBuilder();
 			cb.setDebugEnabled(true)
-			/*
-			 * NOPE :P
-			 */
+					/*
+					 * NOPE :P
+					 */
 			TwitterFactory tf = new TwitterFactory(cb.build());
 			Twitter twitter = tf.getInstance();
 			try {
@@ -207,5 +211,4 @@ public class crawler {
 			// System.exit(-1);
 		}
 	}
-
 }
